@@ -1,0 +1,2092 @@
+{
+  "name": "Workflow 0 (TOS and Privacy Policies) copy",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2832,
+        880
+      ],
+      "id": "6688798e-3e93-4e6d-afeb-921b77bb0917",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg",
+          "mode": "list",
+          "cachedResultName": "Without Industry Restrictions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1027583700,
+          "mode": "list",
+          "cachedResultName": "Series B match",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit#gid=1027583700"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2160,
+        1024
+      ],
+      "id": "2cda31c0-622d-48d1-93ec-9d41aafc716c",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "B0vCxmeWoiZ4XBAh",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// build URLs — mode: runOnceForEachItem\nconst raw = $json[\"Website\"] || \"\";\nconst domain = raw.replace(/^https?:\\/\\//, \"\").replace(/\\/$/, \"\").trim();\nconst companyName = $json[\"Company Name\"] || domain;\n\n// ✅ Skip if domain is missing\nif (!domain) {\n  return [{\n    json: {\n      \"Company Name\":    companyName,\n      \"Website\": \"\",\n      fetch_url:         null,\n      url_type:          null,\n      try_index:         null,\n      skip_reason:       \"Missing domain\"\n    }\n  }];\n}\n\nconst urls = [\n  { url: `https://${domain}/terms`,            type: \"tos\",     tryIndex: 0 },\n  { url: `https://${domain}/terms-of-service`, type: \"tos\",     tryIndex: 1 },\n  { url: `https://${domain}/legal/terms`,      type: \"tos\",     tryIndex: 2 },\n  { url: `https://${domain}/privacy`,          type: \"privacy\", tryIndex: 3 },\n  { url: `https://${domain}/privacy-policy`,   type: \"privacy\", tryIndex: 4 },\n  { url: `https://${domain}/legal/privacy`,    type: \"privacy\", tryIndex: 5 },\n];\n\nreturn urls.map(u => ({\n  json: {\n    \"Company Name\":    companyName,\n    \"Company Website\": $json[\"Website\"],\n    fetch_url:         u.url,\n    url_type:          u.type,\n    try_index:         u.tryIndex,\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1696,
+        448
+      ],
+      "id": "2881f4f6-9212-426d-8795-bd13551e6516",
+      "name": "build URLs"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ff79e32-ff5b-4509-82f9-31e8081ab971",
+              "name": "Company Name",
+              "value": "={{ $json[\"Company Name\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "858f0961-a425-4fb5-94a1-7852898fb8fd",
+              "name": "Company Website",
+              "value": "={{ $json[\"Company Website\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "27df5313-4a4d-4556-9ab7-f0da85e426cb",
+              "name": "fetch_url",
+              "value": "={{ $json.fetch_url }}",
+              "type": "string"
+            },
+            {
+              "id": "cb229fd5-a79b-4dd0-986f-b3c64d1f9c3c",
+              "name": "url_type",
+              "value": "={{ $json.url_type }}",
+              "type": "string"
+            },
+            {
+              "id": "90d1864d-e77f-4ff9-948e-6998095a20fa",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            },
+            {
+              "id": "759dd558-0bc4-49d8-9b79-4a8f6b6b9ad9",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        208
+      ],
+      "id": "b119dbe4-2801-4414-8563-553438f13ae2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -272,
+        128
+      ],
+      "id": "89c57b74-eea8-4a10-8681-bd987f5aa458",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "batchSize": "={{ 1 }}",
+        "options": {
+          "reset": "={{ $node['Loop Over Items'].context[\"done\"] }}"
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1808,
+        960
+      ],
+      "id": "15e66d90-143c-4414-b127-c6233595b76d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const parsed = JSON.parse($json.data);\n\nconst content = (parsed.markdown || \"\").toLowerCase();\n\nlet valid = true;\n\nif (\n  content.includes(\"404\") ||\n  content.includes(\"page not found\")\n) {\n  valid = false;\n}\n\nif (content.length < 300) {\n  valid = false;\n}\n\nreturn {\n  ...$json,\n  markdown: parsed.markdown,\n  valid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        80
+      ],
+      "id": "3e69de17-7dc4-4254-9496-0778af5220da",
+      "name": "Validate ToS & Privacy",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.content?.[0]?.text || \"\";\n\n// Extract summary\nconst summaryMatch = raw.match(/\"summary\"\\s*:\\s*\"([\\s\\S]*?)\",\\s*\"issues\"/);\n\n// Extract issues\nconst issuesMatch = raw.match(/\"issues\"\\s*:\\s*\"([\\s\\S]*?)\",\\s*\"severity\"/);\n\n// Extract severity\nconst severityMatch = raw.match(/\"severity\"\\s*:\\s*\"([\\s\\S]*?)\"/);\n\nreturn {\n  summary: summaryMatch ? summaryMatch[1] : \"\",\n  issues: issuesMatch ? issuesMatch[1] : \"\",\n  severity: severityMatch ? severityMatch[1] : \"\"\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        1184
+      ],
+      "id": "a73cd981-21ff-47ad-aa6c-cf4619738bf0",
+      "name": "structure response"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2320,
+        1616
+      ],
+      "id": "97added7-0c8f-49ba-b686-4e7de350bc00",
+      "name": "Wait",
+      "webhookId": "faa9b8f3-1afe-4f22-8e95-7e67ee58fe82"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n\n  if (item.json.tos_content) {\n    item.json.tos_content =\n      item.json.tos_content.slice(0, 5000);\n  }\n\n  if (item.json.privacy_content) {\n    item.json.privacy_content =\n      item.json.privacy_content.slice(0, 5000);\n  }\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        1296
+      ],
+      "id": "81e30c64-1957-40fd-8988-4705282a15ff",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "179e2040-8831-467b-841b-3981353e6733",
+              "leftValue": "={{ $json.tos_content }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "2bf0a38c-6d93-4a89-ade5-34434fee6f00",
+              "leftValue": "={{ $json.privacy_content }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1120,
+        1568
+      ],
+      "id": "91d4de66-fe54-4c61-ab3d-10c19eb2e1ea",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "scrape",
+        "url": "={{ $json.fetch_url }}",
+        "scrapeOptions": {
+          "options": {
+            "formats": {
+              "format": [
+                {}
+              ]
+            },
+            "headers": {},
+            "waitFor": 1000
+          }
+        },
+        "requestOptions": {}
+      },
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        64
+      ],
+      "id": "cdb3aed0-72fd-4569-904f-fa32d20e19ce",
+      "name": "/scrape",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "firecrawlApi": {
+          "id": "6McMDoT10o9XeZrE",
+          "name": "Paid FireCrawl API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "scrape",
+        "url": "={{ $json.fetch_url }}",
+        "scrapeOptions": {
+          "options": {
+            "formats": {
+              "format": [
+                {}
+              ]
+            },
+            "headers": {},
+            "waitFor": 1000
+          }
+        },
+        "requestOptions": {}
+      },
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        320
+      ],
+      "id": "29fbde0c-4615-4bc8-909a-5b84b8450aaf",
+      "name": "/scrape1",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "firecrawlApi": {
+          "id": "6McMDoT10o9XeZrE",
+          "name": "Paid FireCrawl API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "scrape",
+        "url": "={{ $json.fetch_url }}",
+        "scrapeOptions": {
+          "options": {
+            "formats": {
+              "format": [
+                {}
+              ]
+            },
+            "headers": {},
+            "waitFor": 1000
+          }
+        },
+        "requestOptions": {}
+      },
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        624
+      ],
+      "id": "0c9400b8-aaf6-47a7-89ae-b7e226bedf1c",
+      "name": "/scrape2",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "firecrawlApi": {
+          "id": "6McMDoT10o9XeZrE",
+          "name": "Paid FireCrawl API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "scrape",
+        "url": "={{ $json.fetch_url }}",
+        "scrapeOptions": {
+          "options": {
+            "formats": {
+              "format": [
+                {}
+              ]
+            },
+            "headers": {},
+            "waitFor": 1000
+          }
+        },
+        "requestOptions": {}
+      },
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        896
+      ],
+      "id": "a15d4c9e-2339-47dc-8e1c-96e56aca2aea",
+      "name": "/scrape3",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "firecrawlApi": {
+          "id": "6McMDoT10o9XeZrE",
+          "name": "Paid FireCrawl API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "scrape",
+        "url": "={{ $json.fetch_url }}",
+        "scrapeOptions": {
+          "options": {
+            "formats": {
+              "format": [
+                {}
+              ]
+            },
+            "headers": {},
+            "waitFor": 1000
+          }
+        },
+        "requestOptions": {}
+      },
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        1232
+      ],
+      "id": "923af6e5-733f-42c6-978e-2cd90255173d",
+      "name": "/scrape4",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "firecrawlApi": {
+          "id": "6McMDoT10o9XeZrE",
+          "name": "Paid FireCrawl API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "scrape",
+        "url": "={{ $json.fetch_url }}",
+        "scrapeOptions": {
+          "options": {
+            "formats": {
+              "format": [
+                {}
+              ]
+            },
+            "headers": {},
+            "waitFor": 1000
+          }
+        },
+        "requestOptions": {}
+      },
+      "type": "@mendable/n8n-nodes-firecrawl.firecrawl",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        1456
+      ],
+      "id": "32ff761f-093d-4edd-8f17-5eb9cfc3d346",
+      "name": "/scrape5",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "credentials": {
+        "firecrawlApi": {
+          "id": "6McMDoT10o9XeZrE",
+          "name": "Paid FireCrawl API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -304,
+        496
+      ],
+      "id": "110a784c-7c99-4907-a58e-99f86a323146",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -272,
+        768
+      ],
+      "id": "f4d71933-817b-4743-ab6d-f589dd2ce81c",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -240,
+        1056
+      ],
+      "id": "1d139868-d948-4ec3-8fa4-216533f9992c",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -256,
+        1264
+      ],
+      "id": "83dab7df-b657-4e5e-9613-5b33406ca0f7",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -320,
+        1472
+      ],
+      "id": "afe9d546-bb69-4753-81d5-29091f4a23ce",
+      "name": "Merge6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ff79e32-ff5b-4509-82f9-31e8081ab971",
+              "name": "Company Name",
+              "value": "={{ $json[\"Company Name\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "858f0961-a425-4fb5-94a1-7852898fb8fd",
+              "name": "Company Website",
+              "value": "={{ $json[\"Company Website\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "27df5313-4a4d-4556-9ab7-f0da85e426cb",
+              "name": "fetch_url",
+              "value": "={{ $json.fetch_url }}",
+              "type": "string"
+            },
+            {
+              "id": "cb229fd5-a79b-4dd0-986f-b3c64d1f9c3c",
+              "name": "url_type",
+              "value": "={{ $json.url_type }}",
+              "type": "string"
+            },
+            {
+              "id": "90d1864d-e77f-4ff9-948e-6998095a20fa",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        1312
+      ],
+      "id": "9bc98213-05e0-43c0-9ed1-4bb3a1b5f0ac",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const parsed = JSON.parse($json.data);\n\nconst content = (parsed.markdown || \"\").toLowerCase();\n\nlet valid = true;\n\nif (\n  content.includes(\"404\") ||\n  content.includes(\"page not found\")\n) {\n  valid = false;\n}\n\nif (content.length < 300) {\n  valid = false;\n}\n\nreturn {\n  ...$json,\n  markdown: parsed.markdown,\n  valid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        1312
+      ],
+      "id": "2ee3665d-c30f-401c-993c-98ea6147c51e",
+      "name": "Validate ToS & Privacy1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ff79e32-ff5b-4509-82f9-31e8081ab971",
+              "name": "Company Name",
+              "value": "={{ $json[\"Company Name\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "858f0961-a425-4fb5-94a1-7852898fb8fd",
+              "name": "Company Website",
+              "value": "={{ $json[\"Company Website\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "27df5313-4a4d-4556-9ab7-f0da85e426cb",
+              "name": "fetch_url",
+              "value": "={{ $json.fetch_url }}",
+              "type": "string"
+            },
+            {
+              "id": "cb229fd5-a79b-4dd0-986f-b3c64d1f9c3c",
+              "name": "url_type",
+              "value": "={{ $json.url_type }}",
+              "type": "string"
+            },
+            {
+              "id": "90d1864d-e77f-4ff9-948e-6998095a20fa",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        48,
+        976
+      ],
+      "id": "6a514794-5f37-43c7-a14e-9ec0e91e8971",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const parsed = JSON.parse($json.data);\n\nconst content = (parsed.markdown || \"\").toLowerCase();\n\nlet valid = true;\n\nif (\n  content.includes(\"404\") ||\n  content.includes(\"page not found\")\n) {\n  valid = false;\n}\n\nif (content.length < 300) {\n  valid = false;\n}\n\nreturn {\n  ...$json,\n  markdown: parsed.markdown,\n  valid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        992
+      ],
+      "id": "4adbb5db-19d4-4115-96b0-9c0959a1f9a9",
+      "name": "Validate ToS & Privacy2",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ff79e32-ff5b-4509-82f9-31e8081ab971",
+              "name": "Company Name",
+              "value": "={{ $json[\"Company Name\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "858f0961-a425-4fb5-94a1-7852898fb8fd",
+              "name": "Company Website",
+              "value": "={{ $json[\"Company Website\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "27df5313-4a4d-4556-9ab7-f0da85e426cb",
+              "name": "fetch_url",
+              "value": "={{ $json.fetch_url }}",
+              "type": "string"
+            },
+            {
+              "id": "cb229fd5-a79b-4dd0-986f-b3c64d1f9c3c",
+              "name": "url_type",
+              "value": "={{ $json.url_type }}",
+              "type": "string"
+            },
+            {
+              "id": "90d1864d-e77f-4ff9-948e-6998095a20fa",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        416
+      ],
+      "id": "e6aee33e-e5f8-455f-9cdf-bf3d3b2b7c3a",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const parsed = JSON.parse($json.data);\n\nconst content = (parsed.markdown || \"\").toLowerCase();\n\nlet valid = true;\n\nif (\n  content.includes(\"404\") ||\n  content.includes(\"page not found\")\n) {\n  valid = false;\n}\n\nif (content.length < 300) {\n  valid = false;\n}\n\nreturn {\n  ...$json,\n  markdown: parsed.markdown,\n  valid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        368
+      ],
+      "id": "072da3cd-054e-4236-8e1c-989ba3cb1cec",
+      "name": "Validate ToS & Privacy3",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ff79e32-ff5b-4509-82f9-31e8081ab971",
+              "name": "Company Name",
+              "value": "={{ $json[\"Company Name\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "858f0961-a425-4fb5-94a1-7852898fb8fd",
+              "name": "Company Website",
+              "value": "={{ $json[\"Company Website\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "27df5313-4a4d-4556-9ab7-f0da85e426cb",
+              "name": "fetch_url",
+              "value": "={{ $json.fetch_url }}",
+              "type": "string"
+            },
+            {
+              "id": "cb229fd5-a79b-4dd0-986f-b3c64d1f9c3c",
+              "name": "url_type",
+              "value": "={{ $json.url_type }}",
+              "type": "string"
+            },
+            {
+              "id": "90d1864d-e77f-4ff9-948e-6998095a20fa",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        720
+      ],
+      "id": "8c0ba0c9-3b4e-4eb2-a718-9c8934003284",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const parsed = JSON.parse($json.data);\n\nconst content = (parsed.markdown || \"\").toLowerCase();\n\nlet valid = true;\n\nif (\n  content.includes(\"404\") ||\n  content.includes(\"page not found\")\n) {\n  valid = false;\n}\n\nif (content.length < 300) {\n  valid = false;\n}\n\nreturn {\n  ...$json,\n  markdown: parsed.markdown,\n  valid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        640
+      ],
+      "id": "c989dc9a-8ae3-4aa3-9f43-371174adccb2",
+      "name": "Validate ToS & Privacy4",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ff79e32-ff5b-4509-82f9-31e8081ab971",
+              "name": "Company Name",
+              "value": "={{ $json[\"Company Name\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "858f0961-a425-4fb5-94a1-7852898fb8fd",
+              "name": "Company Website",
+              "value": "={{ $json[\"Company Website\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "27df5313-4a4d-4556-9ab7-f0da85e426cb",
+              "name": "fetch_url",
+              "value": "={{ $json.fetch_url }}",
+              "type": "string"
+            },
+            {
+              "id": "cb229fd5-a79b-4dd0-986f-b3c64d1f9c3c",
+              "name": "url_type",
+              "value": "={{ $json.url_type }}",
+              "type": "string"
+            },
+            {
+              "id": "90d1864d-e77f-4ff9-948e-6998095a20fa",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        1504
+      ],
+      "id": "2d7042ee-cdc3-4b56-a455-95eb96def869",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const parsed = JSON.parse($json.data);\n\nconst content = (parsed.markdown || \"\").toLowerCase();\n\nlet valid = true;\n\nif (\n  content.includes(\"404\") ||\n  content.includes(\"page not found\")\n) {\n  valid = false;\n}\n\nif (content.length < 300) {\n  valid = false;\n}\n\nreturn {\n  ...$json,\n  markdown: parsed.markdown,\n  valid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        1520
+      ],
+      "id": "72049052-e46e-4337-bd75-2168d4ff8fc2",
+      "name": "Validate ToS & Privacy5",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nlet tosContent = \"\";\nlet privacyContent = \"\";\n\nfor (const item of items) {\n\n  const row = item.json;\n\n  // ONLY process valid=true items\n  if (row.valid !== true) {\n    continue;\n  }\n\n  let markdown = row.markdown || \"\";\n\n  // if markdown stored inside data JSON string\n  if (!markdown && row.data) {\n    try {\n      const parsed = JSON.parse(row.data);\n      markdown = parsed.markdown || \"\";\n    } catch (e) {\n      markdown = row.data || \"\";\n    }\n  }\n\n  const type = row.url_type || \"\";\n\n  // Merge ToS content\n  if (type === \"tos\") {\n    tosContent += \"\\n\\n\" + markdown;\n  }\n\n  // Merge Privacy content\n  if (type === \"privacy\") {\n    privacyContent += \"\\n\\n\" + markdown;\n  }\n}\n\nreturn [\n  {\n    json: {\n      \"Company Name\": items[0]?.json[\"Company Name\"],\n      \"Company Website\": items[0]?.json[\"Company Website\"],\n\n      tos_content: tosContent.trim(),\n\n      privacy_content: privacyContent.trim()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        1136
+      ],
+      "id": "aede4a7b-96a2-4afe-b20c-73e242d4e558",
+      "name": "Merging ToS & Privacy"
+    },
+    {
+      "parameters": {
+        "numberInputs": 6
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        976,
+        416
+      ],
+      "id": "fd2a4978-2d8b-4942-a843-930713eb9b90",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e6acc0f9-771d-4ef0-89cb-ea903b05aec6",
+                    "leftValue": "={{ $json.try_index }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d56686fc-1768-4f0c-94ec-0855810b8bd3",
+                    "leftValue": "={{ $json.try_index }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2d5e27d7-d043-4833-8b72-4bbe52802e08",
+                    "leftValue": "={{ $json.try_index }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a8d6604f-2462-474e-bfb1-9b1101de3ae7",
+                    "leftValue": "={{ $json.try_index }}",
+                    "rightValue": 3,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "6bc370fa-f432-4d72-a31a-f7b0985c4030",
+                    "leftValue": "={{ $json.try_index }}",
+                    "rightValue": 4,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "96464c92-cf8a-4ddf-98bc-6f0f37dc6a6b",
+                    "leftValue": "={{ $json.try_index }}",
+                    "rightValue": 5,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1264,
+        400
+      ],
+      "id": "ac90ccb8-6033-4a9a-99a3-c4dcb6f8fdf7",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "claude-sonnet-4-6",
+          "mode": "list",
+          "cachedResultName": "claude-sonnet-4-6"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=ROLE\nSenior commercial contract attorney (20+ yrs). Specialties: GDPR, CCPA/CPRA, COPPA, US state privacy laws, consumer protection, IP licensing, arbitration, indemnification.\n\nTASK\nTriage review of ToS and Privacy Policy for {{ $('Validate ToS & Privacy').item.json[\"Company Name\"] }}. Surface every issue a reviewing attorney needs to prioritize. Be specific and unflinching.\n\nRULES\n- Evaluate against legal standards — don't summarize what clauses say.\n- Silence = issue. Flag legally required omissions.\n- No hallucination. Only flag issues grounded in actual text.\n- COPPA: \"Directed to children\" is content-based, not intent-based.\n- If documents are truncated/garbled, return one HIGH issue noting it.\n\nSEVERITY\nHIGH — Material legal exposure, regulatory non-compliance, unenforceability, unconscionable terms, or significant consumer protection violations.\nMEDIUM — Should be fixed; unlikely to trigger immediate enforcement alone.\nLOW — Drafting/best-practice concerns with no material enforceability impact.\nOverall: HIGH if any HIGH exists. MEDIUM if no HIGH but ≥1 MEDIUM. LOW only if all issues are LOW.\n\nCHECKLIST — TERMS OF SERVICE\n1. Contract Formation — Clickwrap vs. browsewrap? Reasonable notice? Unenforceability risk?\n2. Unilateral Modification — Changes without notice or affirmative consent? Opt-out/cure period?\n3. Limitation of Liability — Cap reasonable and mutual? Carve-outs for gross negligence, willful misconduct, IP, data breach, confidentiality? EU/UK mandatory uncapped categories?\n4. Indemnification — Mutual or one-sided? Scope disproportionate? Defense/settlement control defined?\n5. Arbitration & Class Waiver — Enforceable (FAA/state law)? Opt-out window? IP carve-outs? Mass arbitration mechanism? California PAGA carve-out (post-Adolph v. Uber 2023)? EU/UK unfair terms?\n6. Choice of Law & Forum — Conflicts with mandatory consumer protection law in users' jurisdictions?\n7. UGC / IP Licensing — License perpetual, irrevocable, sublicensable, royalty-free for AI training? Section 230 forfeiture risk? Separate GDPR basis for AI training on UGC? EU moral rights?\n8. Auto-Renewal — Compliant with California ARL, ROSCA? Clear disclosure, affirmative consent, easy cancellation?\n9. Termination & Suspension — \"Sole discretion\" without due process? Loss of pre-paid services? Data export? EU DSA Art. 20 complaints mechanism?\n10. Warranty Disclaimers — Disclaiming warranties prohibited under UCC or Magnuson-Moss? Conspicuous?\n11. Acceptable Use Policy — Vague enough for selective enforcement? Consistent with Section 230(c)(2)?\n12. Refund / Cancellation — Compliant with applicable consumer protection laws?\n13. Force Majeure — Overly broad? Mutual?\n14. Assignment — One-sided? Change-of-control provisions?\n15. Service Levels — Present, absent, or illusory? Meaningful remedies?\n16. Fees & Pricing — Unilateral change right? Notice period?\n17. Boilerplate — Severability, integration clause, notice provisions mis-drafted?\n18. Export Controls / Sanctions / Anti-Bribery — Present where applicable?\n19. Minors / Age Eligibility — Age representation? COPPA compliance?\n20. DMCA & Section 230 — Registered DMCA agent? Compliant notice-and-takedown? Repeat infringer policy? Post-Gonzalez v. Google (2023) algorithmic exposure?\n21. EU DSA — Notice-and-action, internal complaints, transparency reporting? VLOP obligations if 45M+ EU MAUs? Penalty: 6% global turnover.\n\nCHECKLIST — PRIVACY POLICY\n22. GDPR — Lawful basis per activity? All data subject rights? DPO/EU rep with postal address? 72-hr breach notification? Transfer mechanism (SCCs/adequacy/DPF)? Specific retention periods? 2026 EDPB CEA priority: Arts. 12–14 transparency — treat as active enforcement target.\n23. CCPA/CPRA — PI categories, purposes, sources, retention, SPI disclosed? All consumer rights? \"Do Not Sell or Share\" link operational? No B2B exemption (eliminated Jan 1 2023). Policy 12+ months stale = HIGH (ref: CCPA 2025 Tractor Supply settlement ~$1.35M).\n24. Other US State Laws — VCDPA, CPA, CTDPA, UCPA, TDPSA, OCPA: rights, appeals, opt-out of targeted ads, sensitive data consent. Oregon OCPA: \"Categories of third parties\" insufficient — must name recipients. Texas TDPSA: Standalone sensitive data sale notice required separately from policy.\n25. COPPA — Under-13 disclosures, parental consent, no behavioral advertising to children. Penalty: $51,744/violation/day.\n26. Sector Laws — HIPAA, GLBA, FERPA if applicable. FTC Safeguards Rule (2023): fintech must have documented WISP.\n27. Data Collection Specificity — PI categories specific, or hidden behind \"such as\" / \"including but not limited to\"?\n28. Processing Purposes — Specific per data category, or generic \"any business purpose\"?\n29. Third-Party Sharing — Recipients specific? Service providers vs. third parties distinguished? CCPA sale/sharing disclosed? Oregon named-list requirement?\n30. International Transfers — Transfer mechanism identified?\n31. Data Retention — Specific periods, or vague \"as long as necessary\"?\n32. Security Representations — Specific measures or boilerplate? Flag overpromises (\"military-grade,\" \"100% secure\") — FTC §5 risk.\n33. Breach Notification — Commitment to notify? Timeframe? Aligned with state laws and GDPR 72-hr rule?\n34. User Rights Mechanisms — Clearly described, operationalized, accessible? Verification and timeline?\n35. Consent — Opt-in where required? No pre-checked boxes, bundled consent? GPC signal operationally implemented?\n36. Cookies & Tracking — EU ePrivacy/UK PECR consent for non-essential cookies? Session replay tools (FullStory, Hotjar, etc.): CIPA-specific disclosure and affirmative consent required — dominant California class action theory 2025–2026, damages up to $5,000/user/session. Flag as HIGH for any California-facing company without CIPA-compliant consent.\n37. Automated Decision-Making — GDPR Art. 22 and state law profiling disclosed? Right to human review?\n38. Children's Data — COPPA-compliant? Age gates? State law provisions for ages 13–16?\n39. Sensitive Personal Information — Special handling, consent, limit-of-use rights? Texas TDPSA standalone notice?\n40. Policy Staleness — Effective date displayed? 12+ months stale = HIGH.\n41. Contact Info — DPO/privacy contact with email and postal address? EU representative if required?\n42. PP Internal Consistency — Contradicts ToS on data ownership, retention, sharing, UGC licensing?\n43. Dark Patterns — Deceptive design, manipulative consent flows, asymmetric opt-in/opt-out friction?\n\nCHECKLIST — CROSS-DOCUMENT\n44. Contradictions — ToS vs. Privacy Policy conflicts on data ownership, retention, sharing, user rights.\n45. Defined Terms — Used inconsistently or undefined across documents?\n46. Dead References — Missing schedules, documents, or URLs?\n47. Outdated References — EU-US Privacy Shield or other superseded frameworks still cited?\n48. Deception Gap — FTC §5 and CPPA target gap between stated policy and actual practice. Flag template-derived policies without company-specific data mapping as HIGH.\n\nDOCUMENTS\nCompany: {{ $('Validate ToS & Privacy').item.json[\"Company Name\"] }}\nToS: {{ $json.tos_content }}\nPrivacy Policy: {{ $json[\"privacy_content\"] }}\n\nOUTPUT\nReturn ONLY valid JSON. No ```json fences. No preamble. No trailing commas. Properly escaped strings.\n\n{\n  \"summary\": \"3–5 sentence overall posture, most pressing concerns, regulatory red flags.\",\n  \"issues\": \"2–3 sentence breakdown of key issues found across ToS, Privacy Policy, and cross-document gaps.\",\n  \"severity\": \"high\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        1120
+      ],
+      "id": "f6378cbe-0a2d-4a65-8545-4968bd5007dd",
+      "name": "Message a model2",
+      "credentials": {
+        "anthropicApi": {
+          "id": "ITXoLCViX81ZoWff",
+          "name": "Claude API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg",
+          "mode": "list",
+          "cachedResultName": "Without Industry Restrictions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1304937649,
+          "mode": "list",
+          "cachedResultName": "B 140",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit#gid=1304937649"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Company Name",
+              "lookupValue": "={{ $('Loop Over Items').item.json[\"Company Name\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2096,
+        1184
+      ],
+      "id": "205de9b2-00e7-41f4-911c-9aab361a0a03",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "B0vCxmeWoiZ4XBAh",
+          "name": "Google Sheets OAuth2 API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": "={{ $node['Loop Over Items1'].context[\"done\"] }}"
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2400,
+        1200
+      ],
+      "id": "c1d3c748-de90-4207-a29c-a42741d784a9",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg",
+          "mode": "list",
+          "cachedResultName": "Without Industry Restrictions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1304937649,
+          "mode": "list",
+          "cachedResultName": "B 140",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit#gid=1304937649"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $json.row_number }}",
+            "Summary": "={{ $('structure response').item.json.summary }}",
+            "Issues": "={{ $('structure response').item.json.issues }}",
+            "Severity": "={{ $('structure response').item.json.severity }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "# Employees",
+              "displayName": "# Employees",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Twitter Url",
+              "displayName": "Twitter Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company City",
+              "displayName": "Company City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Facebook Url",
+              "displayName": "Facebook Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Founded Year",
+              "displayName": "Founded Year",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Account Stage",
+              "displayName": "Account Stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Phone",
+              "displayName": "Company Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company State",
+              "displayName": "Company State",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total Funding",
+              "displayName": "Total Funding",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Annual Revenue",
+              "displayName": "Annual Revenue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Street",
+              "displayName": "Company Street",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Raised At",
+              "displayName": "Last Raised At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Latest Funding",
+              "displayName": "Latest Funding",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Address",
+              "displayName": "Company Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Country",
+              "displayName": "Company Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Postal Code",
+              "displayName": "Company Postal Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Company Linkedin Url",
+              "displayName": "Company Linkedin Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Latest Funding Amount",
+              "displayName": "Latest Funding Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LinkedIn Profile",
+              "displayName": "LinkedIn Profile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Issues",
+              "displayName": "Issues",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Severity",
+              "displayName": "Severity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2864,
+        1264
+      ],
+      "id": "42a18fd9-3e4b-43f0-936f-2515c6a60edf",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "B0vCxmeWoiZ4XBAh",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2704,
+        1184
+      ],
+      "id": "8c02f371-477b-4d52-9a4a-d12695803ff3",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build URLs": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Validate ToS & Privacy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "build URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate ToS & Privacy": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "structure response": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Message a model2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/scrape": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/scrape1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/scrape2": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/scrape3": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/scrape4": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "/scrape5": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Validate ToS & Privacy1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Validate ToS & Privacy2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Validate ToS & Privacy3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Validate ToS & Privacy4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Validate ToS & Privacy5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate ToS & Privacy3": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate ToS & Privacy4": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate ToS & Privacy2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 3
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate ToS & Privacy1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 4
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate ToS & Privacy5": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 5
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merging ToS & Privacy": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "/scrape",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "/scrape1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "/scrape2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "/scrape3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "/scrape4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "/scrape5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Merging ToS & Privacy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model2": {
+      "main": [
+        [
+          {
+            "node": "structure response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f6478b35-46f5-43f1-b503-9f4e2a6bd284",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bcb04eead6e30b41043485c9028811295fd4cd6c822884b60838ea3f4a86ac04"
+  },
+  "nodeGroups": [],
+  "id": "bgtXHkGps8dozOZT",
+  "tags": []
+}
