@@ -1,0 +1,4 @@
+An automated legal-document triage pipeline built in n8n.
+It reads a list of companies from Google Sheets, discovers their Terms of Service and Privacy Policy pages by trying common URL patterns (/terms, /terms-of-service, /legal/terms, /privacy, /privacy-policy, /legal/privacy), scrapes them with Firecrawl, and validates the results to drop 404s and empty pages. 
+The valid ToS and Privacy content is merged per company, truncated to a safe token budget, and sent to Claude with a senior-contract-attorney prompt that checks contract formation, limitation of liability, indemnification, arbitration and class waivers, choice of law, IP licensing, and GDPR/CCPA/COPPA compliance.
+The model's output is parsed into summary, issues, and severity (HIGH / MEDIUM / LOW) and written back to the source sheet row.
