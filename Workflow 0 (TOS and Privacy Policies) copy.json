@@ -1,5 +1,5 @@
 {
-  "name": "Workflow 0 (TOS and Privacy Policies) copy",
+  "name": "ToS & Privacy Policy Legal Triage",
   "nodes": [
     {
       "parameters": {
@@ -25,17 +25,14 @@
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg",
-          "mode": "list",
-          "cachedResultName": "Without Industry Restrictions",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit?usp=drivesdk"
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
         },
         "sheetName": {
           "__rl": true,
-          "value": 1027583700,
-          "mode": "list",
-          "cachedResultName": "Series B match",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit#gid=1027583700"
+          "value": "YOUR_SOURCE_SHEET_GID",
+          "mode": "id",
+          "cachedResultName": "Source Sheet"
         },
         "options": {}
       },
@@ -46,13 +43,7 @@
         1024
       ],
       "id": "2cda31c0-622d-48d1-93ec-9d41aafc716c",
-      "name": "Get row(s) in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "B0vCxmeWoiZ4XBAh",
-          "name": "Google Sheets OAuth2 API"
-        }
-      }
+      "name": "Get row(s) in sheet"
     },
     {
       "parameters": {
@@ -191,8 +182,7 @@
         1616
       ],
       "id": "97added7-0c8f-49ba-b686-4e7de350bc00",
-      "name": "Wait",
-      "webhookId": "faa9b8f3-1afe-4f22-8e95-7e67ee58fe82"
+      "name": "Wait"
     },
     {
       "parameters": {
@@ -279,12 +269,6 @@
       "retryOnFail": true,
       "alwaysOutputData": true,
       "executeOnce": false,
-      "credentials": {
-        "firecrawlApi": {
-          "id": "6McMDoT10o9XeZrE",
-          "name": "Paid FireCrawl API"
-        }
-      },
       "onError": "continueRegularOutput"
     },
     {
@@ -315,12 +299,6 @@
       "retryOnFail": true,
       "alwaysOutputData": true,
       "executeOnce": false,
-      "credentials": {
-        "firecrawlApi": {
-          "id": "6McMDoT10o9XeZrE",
-          "name": "Paid FireCrawl API"
-        }
-      },
       "onError": "continueRegularOutput"
     },
     {
@@ -351,12 +329,6 @@
       "retryOnFail": true,
       "alwaysOutputData": true,
       "executeOnce": false,
-      "credentials": {
-        "firecrawlApi": {
-          "id": "6McMDoT10o9XeZrE",
-          "name": "Paid FireCrawl API"
-        }
-      },
       "onError": "continueRegularOutput"
     },
     {
@@ -387,12 +359,6 @@
       "retryOnFail": true,
       "alwaysOutputData": true,
       "executeOnce": false,
-      "credentials": {
-        "firecrawlApi": {
-          "id": "6McMDoT10o9XeZrE",
-          "name": "Paid FireCrawl API"
-        }
-      },
       "onError": "continueRegularOutput"
     },
     {
@@ -423,12 +389,6 @@
       "retryOnFail": true,
       "alwaysOutputData": true,
       "executeOnce": false,
-      "credentials": {
-        "firecrawlApi": {
-          "id": "6McMDoT10o9XeZrE",
-          "name": "Paid FireCrawl API"
-        }
-      },
       "onError": "continueRegularOutput"
     },
     {
@@ -459,12 +419,6 @@
       "retryOnFail": true,
       "alwaysOutputData": true,
       "executeOnce": false,
-      "credentials": {
-        "firecrawlApi": {
-          "id": "6McMDoT10o9XeZrE",
-          "name": "Paid FireCrawl API"
-        }
-      },
       "onError": "continueRegularOutput"
     },
     {
@@ -1051,29 +1005,20 @@
         1120
       ],
       "id": "f6378cbe-0a2d-4a65-8545-4968bd5007dd",
-      "name": "Message a model2",
-      "credentials": {
-        "anthropicApi": {
-          "id": "ITXoLCViX81ZoWff",
-          "name": "Claude API"
-        }
-      }
+      "name": "Message a model2"
     },
     {
       "parameters": {
         "documentId": {
           "__rl": true,
-          "value": "166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg",
-          "mode": "list",
-          "cachedResultName": "Without Industry Restrictions",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit?usp=drivesdk"
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
         },
         "sheetName": {
           "__rl": true,
-          "value": 1304937649,
-          "mode": "list",
-          "cachedResultName": "B 140",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit#gid=1304937649"
+          "value": "YOUR_OUTPUT_SHEET_GID",
+          "mode": "id",
+          "cachedResultName": "Output Sheet"
         },
         "filtersUI": {
           "values": [
@@ -1093,12 +1038,6 @@
       ],
       "id": "205de9b2-00e7-41f4-911c-9aab361a0a03",
       "name": "Get row(s) in sheet1",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "B0vCxmeWoiZ4XBAh",
-          "name": "Google Sheets OAuth2 API"
-        }
-      },
       "onError": "continueErrorOutput"
     },
     {
@@ -1121,17 +1060,14 @@
         "operation": "update",
         "documentId": {
           "__rl": true,
-          "value": "166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg",
-          "mode": "list",
-          "cachedResultName": "Without Industry Restrictions",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit?usp=drivesdk"
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
         },
         "sheetName": {
           "__rl": true,
-          "value": 1304937649,
-          "mode": "list",
-          "cachedResultName": "B 140",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/166yLQhFcufAzVgKi-rVIJDriWEP2vBXPh8r4TZDoqQg/edit#gid=1304937649"
+          "value": "YOUR_OUTPUT_SHEET_GID",
+          "mode": "id",
+          "cachedResultName": "Output Sheet"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -1489,13 +1425,7 @@
         1264
       ],
       "id": "42a18fd9-3e4b-43f0-936f-2515c6a60edf",
-      "name": "Update row in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "B0vCxmeWoiZ4XBAh",
-          "name": "Google Sheets OAuth2 API"
-        }
-      }
+      "name": "Update row in sheet"
     },
     {
       "parameters": {},
@@ -2081,12 +2011,9 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "f6478b35-46f5-43f1-b503-9f4e2a6bd284",
   "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "bcb04eead6e30b41043485c9028811295fd4cd6c822884b60838ea3f4a86ac04"
+    "templateCredsSetupCompleted": false
   },
   "nodeGroups": [],
-  "id": "bgtXHkGps8dozOZT",
   "tags": []
 }
